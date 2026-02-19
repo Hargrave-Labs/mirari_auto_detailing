@@ -71,16 +71,25 @@ const Services = () => {
     }, []);
 
     return (
-        <section ref={containerRef} className="py-24 md:py-32 px-6 bg-mirari-black relative z-10">
+        <section ref={containerRef} className="py-24 md:py-32 px-6 bg-transparent relative z-10">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
                 <div className="col-span-1 md:col-span-3 text-center mb-16">
-                    <h2 className="text-sm font-heading tracking-[0.3em] text-mirari-silver mb-4">OUR EXPERTISE</h2>
-                    <div className="w-12 h-[1px] bg-mirari-silver mx-auto opacity-50"></div>
+                    <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-4">
+                        OUR EXPERTISE
+                    </h2>
+                    <div className="flex items-center justify-center gap-2 text-mirari-silver font-body tracking-wider uppercase text-sm">
+                        <span className="w-8 h-[1px] bg-mirari-silver/50" />
+                        PREMIUM PACKAGES
+                        <span className="w-8 h-[1px] bg-mirari-silver/50" />
+                    </div>
                 </div>
                 {services.map((service, index) => (
                     <ServiceCard key={index} service={service} index={index} />
                 ))}
             </div>
+
+            {/* Subtle Bottom Fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-mirari-black to-transparent pointer-events-none z-10" />
         </section>
     );
 };

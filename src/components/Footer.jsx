@@ -3,14 +3,7 @@ import { motion } from 'framer-motion';
 
 const Footer = () => {
     return (
-        <footer className="relative bg-mirari-black py-20 px-6 overflow-hidden border-t border-white/5">
-            {/* Background Car Silhouette Watermark */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none">
-                <svg width="800" height="300" viewBox="0 0 400 150" className="w-[150vw] md:w-[80vw]">
-                    <path d="M20,60 C40,60 50,55 60,45 L90,20 C100,10 130,5 170,5 L230,5 C260,5 280,20 290,30 L320,55 C330,60 340,60 360,60 L370,60 L370,85 L20,85 Z" fill="currentColor" className="text-white" />
-                </svg>
-            </div>
-
+        <footer className="relative bg-mirari-black/50 backdrop-blur-md py-20 px-6 overflow-hidden border-t border-white/5 -mt-20 z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
             <div className="max-w-4xl mx-auto text-center relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}

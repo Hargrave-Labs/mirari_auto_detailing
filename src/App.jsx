@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import ParticleFog from './components/ParticleFog';
 import Hero from './components/Hero';
+import ReviewsSection from './components/ReviewsSection';
 import Services from './components/Services';
 import Footer from './components/Footer';
 
@@ -19,6 +20,7 @@ function App() {
         <Hero onTransitionStart={() => setShowNavbar(true)} />
         {showNavbar && (
           <>
+            <ReviewsSection />
             <Services />
             <Footer />
           </>
