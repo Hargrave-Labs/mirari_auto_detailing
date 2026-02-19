@@ -7,12 +7,14 @@ import ReviewsSection from './components/ReviewsSection';
 import Services from './components/Services';
 import Footer from './components/Footer';
 
+import ThreeDComparison from './components/ThreeDComparison';
+
 function App() {
   const [showNavbar, setShowNavbar] = useState(false);
 
   return (
     <div className="bg-mirari-black min-h-screen text-white selection:bg-mirari-silver selection:text-mirari-black overflow-x-hidden relative">
-      <ParticleFog />
+      <ParticleFog visible={showNavbar} />
       <AnimatePresence>
         {showNavbar && <Navbar />}
       </AnimatePresence>
@@ -20,6 +22,7 @@ function App() {
         <Hero onTransitionStart={() => setShowNavbar(true)} />
         {showNavbar && (
           <>
+            <ThreeDComparison />
             <ReviewsSection />
             <Services />
             <Footer />

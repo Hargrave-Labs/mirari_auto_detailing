@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const ParticleFog = () => {
+const ParticleFog = ({ visible = true }) => {
     const canvasRef = useRef(null);
 
     useEffect(() => {
@@ -9,10 +9,44 @@ const ParticleFog = () => {
         let animationFrameId;
 
         // Configuration
-        // Configuration
         const particles = [];
         const mouse = { x: -1000, y: -1000 };
         const colors = ['#584c6e', '#4c4c6d', '#2e2e41']; // Greyish Purple, Slate Indigo, Darker Slate
+
+        // OPTIMIZATION: Pre-render sprites
+        // Instead of calculating a gradient every frame for every particle,
+        // we create one master image for each color and reuse it.
+        const sprites = {};
+        const spriteSize = 256; // 256px is usually sufficient for soft fog
+        const halfSprite = spriteSize / 2;
+
+        colors.forEach(color => {
+            const spriteCanvas = document.createElement('canvas');
+            spriteCanvas.width = spriteSize;
+            spriteCanvas.height = spriteSize;
+            const spriteCtx = spriteCanvas.getContext('2d');
+
+            // Parse hex to rgb
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+            const r = parseInt(result[1], 16);
+            const g = parseInt(result[2], 16);
+            const b = parseInt(result[3], 16);
+
+            // Create gradient on the sprite
+            // We use full alpha here (1 -> 0) and control actual transparency with globalAlpha
+            const gradient = spriteCtx.createRadialGradient(
+                halfSprite, halfSprite, 0,
+                halfSprite, halfSprite, halfSprite
+            );
+            gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 1)`);
+            gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.5)`);
+            gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+
+            spriteCtx.fillStyle = gradient;
+            spriteCtx.fillRect(0, 0, spriteSize, spriteSize);
+
+            sprites[color] = spriteCanvas;
+        });
 
         // Particle Class
         class Particle {
@@ -39,13 +73,13 @@ const ParticleFog = () => {
                     const forceDirectionX = dx / distance;
                     const forceDirectionY = dy / distance;
                     const force = (maxDistance - distance) / maxDistance;
-                    const repulsionStrength = 2.0; // How strong the push is
+                    const repulsionStrength = 2.0;
 
                     this.vx += forceDirectionX * force * repulsionStrength * 0.1;
                     this.vy += forceDirectionY * force * repulsionStrength * 0.1;
                 }
 
-                // Apply friction to return to normal speed
+                // Apply friction
                 this.vx += (this.originalVx - this.vx) * 0.02;
                 this.vy += (this.originalVy - this.vy) * 0.02;
 
@@ -61,33 +95,18 @@ const ParticleFog = () => {
             }
 
             draw(ctx) {
-                ctx.beginPath();
-                // Create radial gradient for soft puff effect
-                const gradient = ctx.createRadialGradient(
-                    this.x, this.y, 0,
-                    this.x, this.y, this.radius
+                // OPTIMIZATION: Use drawImage instead of createRadialGradient
+                const sprite = sprites[this.color];
+
+                ctx.globalAlpha = this.opacity;
+                ctx.drawImage(
+                    sprite,
+                    this.x - this.radius,
+                    this.y - this.radius,
+                    this.radius * 2,
+                    this.radius * 2
                 );
-
-                // Parse hex to rgb for opacity handling
-                const hexToRgb = (hex) => {
-                    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                    return result ? {
-                        r: parseInt(result[1], 16),
-                        g: parseInt(result[2], 16),
-                        b: parseInt(result[3], 16)
-                    } : null;
-                }
-                const rgb = hexToRgb(this.color);
-
-                if (rgb) {
-                    gradient.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${this.opacity})`);
-                    gradient.addColorStop(0.5, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${this.opacity * 0.5})`);
-                    gradient.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
-                }
-
-                ctx.fillStyle = gradient;
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.globalAlpha = 1.0; // Reset alpha for next operations if needed
             }
         }
 
@@ -96,12 +115,11 @@ const ParticleFog = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            // Dynamic particle count based on screen area
-            // 1920x1080 = ~2,000,000 pixels. 80 particles = ~25,000 pixels per particle.
-            // Mobile (390x844) = ~330,000 pixels. With 18000 density -> ~18 particles.
-            const density = 18000;
+            // Reduce density slightly for even better performance on laptops
+            // Old density 18000 -> New density 20000 (fewer particles)
+            const density = 20000;
             const calculatedCount = Math.floor((canvas.width * canvas.height) / density);
-            const particleCount = Math.max(20, Math.min(80, calculatedCount)); // Clamp between 20 and 80
+            const particleCount = Math.max(15, Math.min(60, calculatedCount)); // Cap at 60 instead of 80
 
             particles.length = 0;
             for (let i = 0; i < particleCount; i++) {
@@ -111,10 +129,8 @@ const ParticleFog = () => {
 
         // Animation Loop
         const animate = () => {
+            // Using clearRect is faster than fillRect for transparancy clearing
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw a base dark layer to blend with
-            // ctx.fillStyle = 'rgba(5, 5, 5, 0.1)'; // Optional: trails? No, fog shouldn't trail.
 
             particles.forEach(p => {
                 p.update(canvas.width, canvas.height, mouse.x, mouse.y);
@@ -147,7 +163,7 @@ const ParticleFog = () => {
     return (
         <canvas
             ref={canvasRef}
-            className="fixed inset-0 w-full h-full pointer-events-none z-0"
+            className={`fixed inset-0 w-full h-full pointer-events-none z-0 transition-opacity duration-[2000ms] ease-in-out ${visible ? 'opacity-100' : 'opacity-0'}`}
             style={{ background: 'transparent' }} // Let CSS handles bg-color behind if needed
         />
     );
