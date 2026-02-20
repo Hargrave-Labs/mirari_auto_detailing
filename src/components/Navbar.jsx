@@ -11,6 +11,18 @@ const Navbar = () => {
         { name: 'CONTACT', href: '#contact' }
     ];
 
+    const handleScroll = (e, href) => {
+        e.preventDefault();
+        const targetId = href.replace('#', '');
+        const elem = document.getElementById(targetId);
+        if (elem) {
+            elem.scrollIntoView({
+                behavior: 'smooth',
+            });
+            setIsOpen(false);
+        }
+    };
+
     return (
         <motion.nav
             initial={{ opacity: 0, y: -20 }}
@@ -28,6 +40,7 @@ const Navbar = () => {
                     <a
                         key={link.name}
                         href={link.href}
+                        onClick={(e) => handleScroll(e, link.href)}
                         className="text-xs font-body tracking-wider text-mirari-silver hover:text-white transition-colors duration-300 uppercase"
                     >
                         {link.name}
@@ -36,7 +49,7 @@ const Navbar = () => {
             </div>
 
             <div className="hidden md:block">
-                <a href="#contact" className="px-6 py-2.5 bg-white text-mirari-black rounded-full text-xs font-body font-bold tracking-wider hover:bg-mirari-silver transition-all duration-300">
+                <a href="#contact" onClick={(e) => handleScroll(e, '#contact')} className="px-6 py-2.5 bg-white text-mirari-black rounded-full text-xs font-body font-bold tracking-wider hover:bg-mirari-silver transition-all duration-300">
                     BOOK NOW
                 </a>
             </div>
@@ -56,13 +69,13 @@ const Navbar = () => {
                         <a
                             key={link.name}
                             href={link.href}
-                            onClick={() => setIsOpen(false)}
+                            onClick={(e) => handleScroll(e, link.href)}
                             className="text-sm font-body tracking-wider text-mirari-silver hover:text-white transition-colors duration-300 uppercase"
                         >
                             {link.name}
                         </a>
                     ))}
-                    <a href="#contact" onClick={() => setIsOpen(false)} className="text-center w-full px-6 py-3 bg-white text-mirari-black rounded-full text-xs font-body font-bold tracking-wider uppercase mt-4 hover:bg-mirari-silver transition-all">
+                    <a href="#contact" onClick={(e) => handleScroll(e, '#contact')} className="text-center w-full px-6 py-3 bg-white text-mirari-black rounded-full text-xs font-body font-bold tracking-wider uppercase mt-4 hover:bg-mirari-silver transition-all">
                         Book Now
                     </a>
                 </div>
