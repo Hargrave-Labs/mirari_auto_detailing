@@ -5,9 +5,8 @@ import ParticleFog from './components/ParticleFog';
 import Hero from './components/Hero';
 import ReviewsSection from './components/ReviewsSection';
 import Services from './components/Services';
+import BookingContact from './components/BookingContact';
 import Footer from './components/Footer';
-
-import ThreeDComparison from './components/ThreeDComparison';
 
 function App() {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -22,9 +21,9 @@ function App() {
         <Hero onTransitionStart={() => setShowNavbar(true)} />
         {showNavbar && (
           <>
-            <ThreeDComparison />
-            <ReviewsSection />
             <Services />
+            <ReviewsSection />
+            <BookingContact />
             <Footer />
           </>
         )}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import SqueegeeReveal from './SqueegeeReveal';
 
 // Mock Data for Initial Implementation
 const reviews = [
@@ -45,7 +46,7 @@ const StarRating = () => (
 
 const ReviewsSection = () => {
     return (
-        <section className="relative py-24 px-6 overflow-hidden z-20">
+        <section id="reviews" className="relative py-24 px-6 overflow-hidden z-20">
             {/* Ambient Background Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[40vh] bg-mirari-fog-purple/10 blur-[120px] rounded-full pointer-events-none" />
 
@@ -58,9 +59,11 @@ const ReviewsSection = () => {
                     viewport={{ once: true }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-4">
-                        CLIENT EXPERIENCES
-                    </h2>
+                    <SqueegeeReveal>
+                        <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-4">
+                            CLIENT EXPERIENCES
+                        </h2>
+                    </SqueegeeReveal>
                     <div className="flex items-center justify-center gap-2 text-mirari-silver font-body tracking-wider uppercase text-sm">
                         <span className="w-8 h-[1px] bg-mirari-silver/50" />
                         Google Reviews

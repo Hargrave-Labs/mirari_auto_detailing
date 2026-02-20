@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const MagneticButton = ({ children, className }) => {
+const MagneticButton = ({ children, className, onClick }) => {
     const ref = useRef(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
 
@@ -22,6 +22,7 @@ const MagneticButton = ({ children, className }) => {
             ref={ref}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
+            onClick={onClick}
             animate={{ x: position.x, y: position.y }}
             transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
             className={`relative overflow-hidden group ${className}`}
@@ -160,8 +161,14 @@ const Hero = ({ onTransitionStart }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 1, delay: 0.8 }}
                             >
-                                <MagneticButton className="px-8 py-3 md:px-10 md:py-4 bg-white text-mirari-black font-body font-semibold tracking-wide rounded-sm hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] transition-shadow duration-300">
-                                    BOOK YOUR DETAIL
+                                <MagneticButton
+                                    onClick={() => {
+                                        const el = document.getElementById('contact');
+                                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                                    }}
+                                    className="px-8 py-3 md:px-10 md:py-4 bg-white text-mirari-black font-body font-semibold tracking-wide rounded-sm hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] transition-shadow duration-300"
+                                >
+                                    READY TO BE MARVELLED
                                 </MagneticButton>
                             </motion.div>
                         </motion.div>
