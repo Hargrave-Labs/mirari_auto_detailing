@@ -30,8 +30,11 @@ const Navbar = () => {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-4 md:px-12 backdrop-blur-md bg-mirari-black/50 border-b border-white/5"
         >
-            <div className="text-xl md:text-2xl font-heading font-bold tracking-widest text-white">
-                MIRARI
+            <div className="flex items-center gap-4">
+                <img src="/logo.svg" alt="Mirari Logo" className="h-6 md:h-8 w-auto object-contain" />
+                <div className="text-xl md:text-2xl font-heading font-bold tracking-widest text-white">
+                    MIRARI
+                </div>
             </div>
 
             {/* Desktop Nav */}
