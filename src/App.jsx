@@ -5,6 +5,7 @@ import ParticleFog from './components/ParticleFog';
 import Hero from './components/Hero';
 import ReviewsSection from './components/ReviewsSection';
 import Services from './components/Services';
+import Portfolio from './components/Portfolio';
 import BookingContact from './components/BookingContact';
 import Footer from './components/Footer';
 
@@ -22,6 +23,7 @@ function App() {
         {showNavbar && (
           <>
             <Services />
+            <Portfolio />
             <ReviewsSection />
             <BookingContact />
             <Footer />

@@ -7,57 +7,18 @@ import SqueegeeReveal from './SqueegeeReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const services = [
-    {
-        title: "ESSENTIA",
-        subtitle: "Full Interior Detail",
-        description: "Designed to restore your vehicle’s interior. Essentia focuses on a deep vacuum and wipe-down of all carpets, mats, interior surfaces and crevices while preserving materials and plastics. Freshening your car and making it look and feel new again.",
-        description: "Designed to restore your vehicle’s interior. Essentia focuses on a deep vacuum and wipe-down of all carpets, mats, interior surfaces and crevices while preserving materials and plastics. Freshening your car and making it look and feel new again.",
-        icon: Sparkles,
-        details: [
-            "Deep vacuum of seats, carpets, and boot",
-            "Wipe down of all hard interior surfaces",
-            "UV protection applied to plastics and dash",
-            "Interior glass and mirrors cleaned",
-            "Door jambs wiped down",
-            "Deodorizing treatment"
-        ]
-    },
-    {
-        title: "CLARITAS",
-        subtitle: "Full Exterior Detail",
-        description: "An optimised and refined exterior cleaning method suited to your vehicle. Claritas aims to protect and enhance paintwork, tyres, rims, exterior trims, plastics and glass, delivering a glossy and professional finish.",
-        description: "An optimised and refined exterior cleaning method suited to your vehicle. Claritas aims to protect and enhance paintwork, tyres, rims, exterior trims, plastics and glass, delivering a glossy and professional finish.",
-        icon: Shield,
-        details: [
-            "Snow foam pre-wash to remove loose dirt",
-            "Two-bucket safe hand wash",
-            "Wheels, tires, and wheel arches deep cleaned",
-            "Chemical decontamination (iron removal)",
-            "Plush towel dry & air blow crevices",
-            "Tyre dressing applied",
-            "Spray sealant applied for 1-month protection",
-            "Exterior glass cleaned"
-        ]
-    },
-    {
-        title: "ULTIMA",
-        subtitle: "Full Detail Package",
-        description: "Combining Essentia and Claritas, this is the full and ultimate package. Ultima also includes a deep vacuum and shampoo of the headliner. Experience a package that makes your car look and feel new inside and out.",
-        highlight: true,
-        highlight: true,
-        icon: Star,
-        details: [
-            "Includes all ESSENTIA interior services",
-            "Includes all CLARITAS exterior services",
-            "Headliner spot cleaning / shampoo",
-            "Leather seats deep cleaned and conditioned (if applicable)",
-            "Fabric seats steam cleaned (if applicable)",
-            "Engine bay surface wipe down",
-            "Upgraded 3-month ceramic spray protection"
-        ]
-    }
-];
+import { client } from '../client';
+
+const iconMapping = {
+    'ESSENTIA': Sparkles,
+    'CLARITAS': Shield,
+    'ULTIMA': Star,
+};
+
+const getIconForService = (title) => {
+    const upperTitle = title?.toUpperCase();
+    return iconMapping[upperTitle] || CheckCircle2;
+};
 
 const ServiceCard = ({ service, index }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -82,7 +43,10 @@ const ServiceCard = ({ service, index }) => {
             <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 md:group-hover:animate-shine left-[125%]" />
 
             <div className="mb-6 w-14 h-14 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform duration-500 relative z-10">
-                {service.icon && <service.icon className="w-6 h-6 text-mirari-silver group-hover:text-white transition-colors duration-500" />}
+                {(() => {
+                    const Icon = getIconForService(service.title);
+                    return <Icon className="w-6 h-6 text-mirari-silver group-hover:text-white transition-colors duration-500" />;
+                })()}
             </div>
 
             <div className="flex justify-between items-start mb-2 relative z-10">
@@ -108,7 +72,7 @@ const ServiceCard = ({ service, index }) => {
                         <div className="pt-4 border-t border-white/10 mb-8">
                             <h5 className="text-sm font-heading tracking-widest uppercase text-white mb-4">What's Included</h5>
                             <ul className="space-y-3">
-                                {service.details.map((detail, idx) => (
+                                {service.details && service.details.map((detail, idx) => (
                                     <motion.li
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
@@ -134,9 +98,9 @@ const ServiceCard = ({ service, index }) => {
                 {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
 
-            {/* Background decorative number */}
-            <div className="absolute -bottom-4 -right-4 text-9xl font-heading font-bold text-white/[0.02] pointer-events-none select-none z-0">
-                0{index + 1}
+            {/* Background decorative text */}
+            <div className="absolute -bottom-4 -right-4 text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-white/[0.02] pointer-events-none select-none z-0 tracking-tighter overflow-hidden whitespace-nowrap">
+                {service.title?.toUpperCase()}
             </div>
         </motion.div>
     );
@@ -144,8 +108,30 @@ const ServiceCard = ({ service, index }) => {
 
 const Services = () => {
     const containerRef = useRef(null);
+    const [servicesData, setServicesData] = useState([]);
 
     useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const query = `*[_type == "service"]`;
+                const data = await client.fetch(query);
+
+                // Sort to maintain ESSENTIA -> CLARITAS -> ULTIMA order
+                const order = { 'ESSENTIA': 1, 'CLARITAS': 2, 'ULTIMA': 3 };
+                data.sort((a, b) => (order[a.title?.toUpperCase()] || 99) - (order[b.title?.toUpperCase()] || 99));
+
+                setServicesData(data);
+            } catch (error) {
+                console.error("Error fetching services:", error);
+            }
+        };
+
+        fetchServices();
+    }, []);
+
+    useEffect(() => {
+        if (servicesData.length === 0) return;
+
         const ctx = gsap.context(() => {
             gsap.utils.toArray('.service-card').forEach((card, i) => {
                 gsap.to(card, {
@@ -161,10 +147,13 @@ const Services = () => {
                     delay: i * 0.2
                 });
             });
+            setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 100);
         }, containerRef);
 
         return () => ctx.revert();
-    }, []);
+    }, [servicesData]);
 
     return (
         <section id="services" ref={containerRef} className="py-24 md:py-32 px-6 bg-transparent relative z-10">
@@ -184,8 +173,8 @@ const Services = () => {
 
                 {/* Changed to a grid that adapts to expanded content better or stack on mobile */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                    {services.map((service, index) => (
-                        <ServiceCard key={index} service={service} index={index} />
+                    {servicesData.map((service, index) => (
+                        <ServiceCard key={service._id || index} service={service} index={index} />
                     ))}
                 </div>
             </div>

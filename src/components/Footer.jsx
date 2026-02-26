@@ -4,7 +4,7 @@ const Footer = () => {
     return (
         <footer className="relative bg-mirari-black py-12 px-6 overflow-hidden border-t border-white/5 z-20">
             {/* Massive background text */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[15vw] font-heading font-black text-white/[0.02] pointer-events-none select-none whitespace-nowrap">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[15vw] font-heading font-black text-white/[0.05] pointer-events-none select-none whitespace-nowrap">
                 MIRARI
             </div>
 

@@ -131,9 +131,10 @@ const BookingContact = () => {
                             <div className="space-y-2">
                                 <label className="text-xs font-heading tracking-widest text-mirari-silver uppercase">Service of Interest</label>
                                 <select
+                                    defaultValue=""
                                     className="w-full bg-mirari-black/50 border border-white/10 rounded-none px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-mirari-silver transition-colors appearance-none"
                                 >
-                                    <option value="" disabled selected>Select a package...</option>
+                                    <option value="" disabled>Select a package...</option>
                                     <option value="essentia">ESSENTIA - Full Interior</option>
                                     <option value="claritas">CLARITAS - Full Exterior</option>
                                     <option value="ultima">ULTIMA - Premium Full Detail</option>
