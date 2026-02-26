@@ -242,7 +242,7 @@ const ReviewsSection = () => {
     }, []);
 
     return (
-        <section id="reviews" className="relative py-24 overflow-hidden z-20 bg-mirari-black">
+        <section id="reviews" className="relative py-24 overflow-hidden z-20 bg-transparent">
             {/* Ambient Background Glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[40vh] bg-mirari-fog-purple/10 blur-[120px] rounded-full pointer-events-none" />
 

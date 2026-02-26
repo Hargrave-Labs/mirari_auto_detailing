@@ -8,7 +8,7 @@ const BookingContact = () => {
     const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
     return (
-        <section id="contact" ref={sectionRef} className="py-24 md:py-32 px-6 bg-mirari-black relative z-10 border-t border-white/5">
+        <section id="contact" ref={sectionRef} className="py-24 md:py-32 px-6 bg-transparent relative z-10 border-t border-white/5">
             {/* Subtle glow behind the form */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] md:w-[40vw] h-[60vh] bg-mirari-fog-purple/10 blur-[120px] rounded-full pointer-events-none" />
 
