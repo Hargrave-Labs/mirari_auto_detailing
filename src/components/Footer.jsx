@@ -15,7 +15,7 @@ const Footer = () => {
 
                 <div className="flex gap-8 text-sm font-heading tracking-widest uppercase text-gray-400">
                     <a href="https://www.instagram.com/mirariautodetailing/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
-                    <a href="mailto:info@mirari.com" className="hover:text-white transition-colors">Email</a>
+                    <a href="mailto:mirariautodetailing@gmail.com" className="hover:text-white transition-colors">Email</a>
                 </div>
 
                 <p className="text-gray-600 text-xs font-body tracking-wider text-center md:text-left">
