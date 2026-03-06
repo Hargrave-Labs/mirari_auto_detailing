@@ -358,17 +358,16 @@ const Portfolio = () => {
         <section id="portfolio" ref={containerRef} className={`py-24 md:py-32 px-6 bg-transparent relative w-full ${selectedItem ? 'z-[100]' : 'z-10'}`}>
             <div className="max-w-7xl mx-auto">
 
-                <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8">
-                    <div>
-                        <SqueegeeReveal>
-                            <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-4">
-                                RECENT WORK
-                            </h2>
-                        </SqueegeeReveal>
-                        <div className="flex items-center gap-2 text-mirari-silver font-body tracking-wider uppercase text-sm">
-                            <span className="w-8 h-[1px] bg-mirari-silver/50" />
-                            PORTFOLIO SHOWCASE
-                        </div>
+                <div className="mb-16 flex flex-col items-center justify-center text-center gap-4">
+                    <SqueegeeReveal>
+                        <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-2">
+                            RECENT WORK
+                        </h2>
+                    </SqueegeeReveal>
+                    <div className="flex items-center justify-center gap-2 text-mirari-silver font-body tracking-wider uppercase text-sm">
+                        <span className="w-8 h-[1px] bg-mirari-silver/50" />
+                        PORTFOLIO SHOWCASE
+                        <span className="w-8 h-[1px] bg-mirari-silver/50" />
                     </div>
                 </div>
 

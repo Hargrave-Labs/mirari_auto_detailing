@@ -4,9 +4,9 @@ import { Menu, X } from 'lucide-react';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-
     const navLinks = [
         { name: 'SERVICES', href: '#services' },
+        { name: 'PORTFOLIO', href: '#portfolio' },
         { name: 'CLIENTS', href: '#reviews' },
         { name: 'CONTACT', href: '#contact' }
     ];
