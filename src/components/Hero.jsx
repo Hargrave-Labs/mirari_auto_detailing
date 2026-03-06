@@ -85,7 +85,9 @@ const Hero = ({ onTransitionStart }) => {
                 */}
                 <motion.div
                     layout // Enable layout animation
-                    className="flex items-center justify-center relative"
+                    // Conditional classes: When NOT transitioning (big state), apply negative margins.
+                    // When transitioning/complete (small state), no left margin so it naturally centers.
+                    className={`flex items-center justify-center relative ${!isTransitioning ? "-ml-10" : ""}`}
                     initial={{ marginBottom: 0, scale: 1.5 }}
                     animate={{
                         marginTop: isTransitioning ? "0px" : "0px",
