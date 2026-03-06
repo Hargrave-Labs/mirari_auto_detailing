@@ -10,7 +10,6 @@ const ParticleFog = ({ visible = true }) => {
 
         // Configuration
         const particles = [];
-        const mouse = { x: -1000, y: -1000 };
         const colors = ['#584c6e', '#4c4c6d', '#2e2e41']; // Greyish Purple, Slate Indigo, Darker Slate
 
         // OPTIMIZATION: Pre-render sprites
@@ -56,33 +55,11 @@ const ParticleFog = ({ visible = true }) => {
                 this.radius = Math.random() * 200 + 100; // Large puffs
                 this.color = colors[Math.floor(Math.random() * colors.length)];
                 this.opacity = Math.random() * 0.15 + 0.05; // Low opacity
-                this.vx = (Math.random() - 0.5) * 0.2; // Slow base movement
-                this.vy = (Math.random() - 0.5) * 0.2;
-                this.originalVx = this.vx;
-                this.originalVy = this.vy;
+                this.vx = (Math.random() - 0.5) * 1; // Configurable speed multiplier (5 is quite fast, 0.5 is slow)
+                this.vy = (Math.random() - 0.5) * 1;
             }
 
-            update(w, h, mouseX, mouseY) {
-                // Mouse Interaction (Repulsion/Flow)
-                const dx = this.x - mouseX;
-                const dy = this.y - mouseY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                const maxDistance = 300; // Interaction radius
-
-                if (distance < maxDistance) {
-                    const forceDirectionX = dx / distance;
-                    const forceDirectionY = dy / distance;
-                    const force = (maxDistance - distance) / maxDistance;
-                    const repulsionStrength = 2.0;
-
-                    this.vx += forceDirectionX * force * repulsionStrength * 0.1;
-                    this.vy += forceDirectionY * force * repulsionStrength * 0.1;
-                }
-
-                // Apply friction
-                this.vx += (this.originalVx - this.vx) * 0.02;
-                this.vy += (this.originalVy - this.vy) * 0.02;
-
+            update(w, h) {
                 // Move
                 this.x += this.vx;
                 this.y += this.vy;
@@ -133,7 +110,7 @@ const ParticleFog = ({ visible = true }) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             particles.forEach(p => {
-                p.update(canvas.width, canvas.height, mouse.x, mouse.y);
+                p.update(canvas.width, canvas.height);
                 p.draw(ctx);
             });
 
@@ -144,18 +121,18 @@ const ParticleFog = ({ visible = true }) => {
         animate();
 
         // Event Listeners
-        const handleResize = () => init();
-        const handleMouseMove = (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
+        const handleResize = () => {
+            // Only update dimensions, do not recreate particles to prevent mobile scroll glitch
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
         };
 
         window.addEventListener('resize', handleResize);
-        window.addEventListener('mousemove', handleMouseMove);
 
         return () => {
             window.removeEventListener('resize', handleResize);
-            window.removeEventListener('mousemove', handleMouseMove);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);

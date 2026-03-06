@@ -15,7 +15,7 @@ const StarRating = ({ rating }) => (
 
 const ReviewCard = ({ review }) => {
     return (
-        <div className="group w-[320px] md:w-[420px] flex-shrink-0 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] backdrop-blur-xl border border-white/5 hover:border-mirari-silver/30 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.15)] hover:-translate-y-2 relative flex flex-col justify-between min-h-[250px] mx-3 text-left overflow-hidden">
+        <div className="group w-[85vw] max-w-[340px] md:w-[45vw] md:max-w-[420px] lg:w-[30vw] lg:max-w-[450px] flex-shrink-0 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] backdrop-blur-xl border border-white/5 hover:border-mirari-silver/30 transition-all duration-500 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.15)] hover:-translate-y-2 relative flex flex-col justify-between min-h-[250px] text-left overflow-hidden">
             {/* Subtle Inner Glow on Hover */}
             <div className="absolute inset-0 bg-gradient-to-tr from-mirari-silver/0 via-mirari-silver/0 to-mirari-silver/0 group-hover:to-mirari-silver/[0.03] pointer-events-none transition-all duration-500" />
 
@@ -90,131 +90,93 @@ const LoadingSkeleton = () => (
     </div>
 );
 
-const getDuplicatedReviews = (revs) => {
-    if (!revs || revs.length === 0) return [];
-    let dups = [...revs];
-    // Ensure the block is wide enough to cover screen sizes (at least 8-10 cards = ~4000px)
-    while (dups.length < 8) {
-        dups = [...dups, ...revs];
-    }
-    return dups;
-};
+const ReviewsCarousel = ({ reviews }) => {
+    const listRef = useRef(null);
 
-const InfiniteMarquee = ({ reviews }) => {
-    const containerRef = useRef(null);
-    const innerRef = useRef(null);
-    const [isHovering, setIsHovering] = useState(false);
+    // Duplicate reviews to create enough track for an infinite loop feeling
+    const displayReviews = useMemo(() => {
+        if (!reviews || reviews.length === 0) return [];
+        // Create 7 identical sets for smooth wrapping behavior (gives extreme runway to both sides)
+        return [...reviews, ...reviews, ...reviews, ...reviews, ...reviews, ...reviews, ...reviews];
+    }, [reviews]);
 
-    // Core motion values
-    const x = useMotionValue(0);
-    const [contentWidth, setContentWidth] = useState(0);
-    const panVelocity = useRef(0);
+    const scroll = (direction) => {
+        if (listRef.current) {
+            const container = listRef.current;
+            const cardElement = container.firstElementChild;
+            // Dynamically calculate gap based on breakpoint to ensure scroll precisely snaps 1 item.
+            const gap = window.innerWidth >= 1024 ? 32 : window.innerWidth >= 768 ? 24 : 16;
+            const scrollAmount = cardElement ? cardElement.offsetWidth + gap : container.clientWidth * 0.85;
 
-    const displayReviews = useMemo(() => getDuplicatedReviews(reviews), [reviews]);
+            const currentScroll = container.scrollLeft;
+            const scrollTo = direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount;
 
-    useEffect(() => {
-        if (innerRef.current) {
-            setContentWidth(innerRef.current.scrollWidth);
-            // Start the x position safely in the middle block to allow immediate panning in either direction
-            x.set(-innerRef.current.scrollWidth);
+            container.scrollTo({ left: scrollTo, behavior: 'smooth' });
         }
-    }, [displayReviews, x]);
-
-    useAnimationFrame((_, delta) => {
-        if (!contentWidth) return;
-
-        let newX = x.get();
-
-        let moveBy = (0.5 * delta) / 16;
-
-        // Allow easier reading on hover
-        if (isHovering) moveBy *= 0.2;
-
-        // Apply manual button padding velocity
-        if (Math.abs(panVelocity.current) > 0.1) {
-            moveBy += panVelocity.current * (delta / 16);
-            panVelocity.current *= 0.9; // decay the velocity for smooth slide
-        } else {
-            panVelocity.current = 0;
-        }
-
-        newX -= moveBy;
-
-        // Invisible Seamless Wrapping
-        // We render 3 identical blocks: Block 0, Block 1, Block 2
-        // We keep the view constrained between -2 * contentWidth and -1 * contentWidth
-        if (newX <= -2 * contentWidth) {
-            newX += contentWidth; // Seamlessly jump forward
-        } else if (newX > -contentWidth) {
-            newX -= contentWidth; // Seamlessly jump backward
-        }
-
-        x.set(newX);
-    });
-
-    const handlePan = (direction) => {
-        if (!contentWidth) return;
-        // Inject velocity: left means scroll right (showing previous elements), right means scroll left
-        panVelocity.current = direction === 'left' ? -60 : 60;
     };
+
+    const handleScroll = () => {
+        if (!listRef.current) return;
+        const container = listRef.current;
+
+        const singleSetWidth = container.scrollWidth / 7;
+
+        // Endless Carousel Reset Logic
+        // If we reach near the first set, jump to the middle seamlessly without animating
+        if (container.scrollLeft < singleSetWidth) {
+            container.scrollLeft += singleSetWidth * 3;
+        }
+        // If we reach near the last set, jump to the middle seamlessly
+        else if (container.scrollLeft > singleSetWidth * 5) {
+            container.scrollLeft -= singleSetWidth * 3;
+        }
+    };
+
+    // Center the scroll track on mount so you start seamlessly with previous/next cards available
+    useEffect(() => {
+        if (listRef.current) {
+            const container = listRef.current;
+            const singleSetWidth = container.scrollWidth / 7;
+            container.scrollLeft = singleSetWidth * 3;
+        }
+    }, [displayReviews]);
 
     if (reviews.length === 0) return null;
 
     return (
-        <div
-            className="flex w-full relative group items-center py-10 overflow-hidden"
-            ref={containerRef}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-        >
-            {/* Edge fades */}
-            <div className="absolute left-0 top-0 bottom-0 w-16 md:w-48 bg-gradient-to-r from-mirari-black via-mirari-black/90 to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-16 md:w-48 bg-gradient-to-l from-mirari-black via-mirari-black/90 to-transparent z-10 pointer-events-none" />
-
-            {/* Left Nav Arrow (Always Visible) */}
+        <div className="relative w-full flex items-center py-10 overflow-visible">
+            {/* Left Nav Arrow */}
             <button
-                onClick={() => handlePan('left')}
-                className="absolute left-4 md:left-8 z-20 w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300"
+                onClick={() => scroll('left')}
+                className="absolute left-2 md:left-4 lg:left-8 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300"
                 aria-label="Scroll left"
             >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="20" height="20" className="md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M15 18l-6-6 6-6" />
                 </svg>
             </button>
 
-            {/* Marquee Wrapper */}
-            <motion.div
-                className="flex w-max"
-                style={{ x }}
+            {/* Scroll Track */}
+            <div
+                ref={listRef}
+                onScroll={handleScroll}
+                className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 gap-4 md:gap-6 lg:gap-8 justify-start py-8 -my-8"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-                {/* 
-                  Render 3 identical blocks for flawless bidirectional seamless scrolling.
-                  When we scroll out of the middle block, we jump instantly and invisibly back into it.
-                */}
-                <div className="flex w-max">
-                    {displayReviews.map((r, i) => (
-                        <ReviewCard key={`block0-${i}-${r._id || r.name}`} review={r} />
-                    ))}
-                </div>
-                <div className="flex w-max" ref={innerRef}>
-                    {displayReviews.map((r, i) => (
-                        <ReviewCard key={`block1-${i}-${r._id || r.name}`} review={r} />
-                    ))}
-                </div>
-                <div className="flex w-max">
-                    {displayReviews.map((r, i) => (
-                        <ReviewCard key={`block2-${i}-${r._id || r.name}`} review={r} />
-                    ))}
-                </div>
-            </motion.div>
+                {displayReviews.map((r, i) => (
+                    <div key={`carousel-${i}-${r._id || r.name}`} className="snap-center shrink-0 flex items-start justify-center">
+                        <ReviewCard review={r} />
+                    </div>
+                ))}
+            </div>
 
-            {/* Right Nav Arrow (Always Visible) */}
+            {/* Right Nav Arrow */}
             <button
-                onClick={() => handlePan('right')}
-                className="absolute right-4 md:right-8 z-20 w-12 h-12 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300"
+                onClick={() => scroll('right')}
+                className="absolute right-2 md:right-4 lg:right-8 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-white/20 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300"
                 aria-label="Scroll right"
             >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="20" height="20" className="md:w-6 md:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 18l6-6-6-6" />
                 </svg>
             </button>
@@ -253,7 +215,7 @@ const ReviewsSection = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                     viewport={{ once: true }}
-                    className="text-center mb-16 px-6 max-w-7xl mx-auto"
+                    className="text-center mb-8 md:mb-16 px-6 max-w-7xl mx-auto"
                 >
                     <SqueegeeReveal>
                         <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-4">
@@ -272,7 +234,7 @@ const ReviewsSection = () => {
                     {loading ? (
                         <LoadingSkeleton />
                     ) : reviews && reviews.length > 0 ? (
-                        <InfiniteMarquee reviews={reviews} />
+                        <ReviewsCarousel reviews={reviews} />
                     ) : (
                         <div className="text-mirari-silver font-body opacity-60">
                             Check back later for client experiences.
