@@ -156,18 +156,27 @@ const ReviewsCarousel = ({ reviews }) => {
                 </svg>
             </button>
 
-            {/* Scroll Track */}
+            {/* Scroll Track Wrapper with Fade Effects */}
             <div
-                ref={listRef}
-                onScroll={handleScroll}
-                className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 gap-4 md:gap-6 lg:gap-8 justify-start py-8 -my-8"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                className="w-full h-full py-12 -my-12"
+                style={{
+                    WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+                    maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)'
+                }}
             >
-                {displayReviews.map((r, i) => (
-                    <div key={`carousel-${i}-${r._id || r.name}`} className="snap-center shrink-0 flex items-start justify-center">
-                        <ReviewCard review={r} />
-                    </div>
-                ))}
+                {/* Scroll Track */}
+                <div
+                    ref={listRef}
+                    onScroll={handleScroll}
+                    className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 gap-4 md:gap-6 lg:gap-8 justify-start py-8 -my-8"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                    {displayReviews.map((r, i) => (
+                        <div key={`carousel-${i}-${r._id || r.name}`} className="snap-center shrink-0 flex items-start justify-center">
+                            <ReviewCard review={r} />
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* Right Nav Arrow */}
