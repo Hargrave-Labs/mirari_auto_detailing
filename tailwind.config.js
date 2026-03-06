@@ -18,7 +18,7 @@ export default {
         }
       },
       fontFamily: {
-        heading: ['Orbitron', 'sans-serif'],
+        heading: ['Mokoto', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
       },
       backgroundImage: {

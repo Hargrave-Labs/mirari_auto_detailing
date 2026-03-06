@@ -140,7 +140,7 @@ const Hero = ({ onTransitionStart }) => {
                             transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
                             className="flex flex-col items-center"
                         >
-                            <h1 className="text-5xl md:text-7xl lg:text-9xl font-heading font-bold tracking-tighter text-white mb-2">
+                            <h1 className="text-5xl md:text-7xl lg:text-9xl font-heading font-bold tracking-[0.2em] text-white mb-2 ml-4 md:ml-6 lg:ml-8">
                                 MIRARI
                             </h1>
                             <p className="text-mirari-silver tracking-[0.5em] text-xs md:text-sm lg:text-base uppercase mb-8">

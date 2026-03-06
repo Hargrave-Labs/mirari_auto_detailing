@@ -64,7 +64,7 @@ const Loader = ({ onComplete }) => {
                             preserveAspectRatio="xMidYMid meet"
                             className="overflow-visible"
                         >
-                            <g transform="translate(0.000000,640.000000) scale(0.100000,-0.100000)" stroke="#FFFFFF" strokeWidth="15">
+                            <g transform="translate(-68.000000,634.500000) scale(0.100000,-0.100000)" stroke="#FFFFFF" strokeWidth="15">
                                 {svgPaths.map((d, index) => (
                                     <motion.path
                                         key={index}
