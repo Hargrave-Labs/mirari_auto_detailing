@@ -149,7 +149,7 @@ const BookingContact = () => {
                                 <div>
                                     <p className="text-xs font-heading tracking-widest text-gray-500 uppercase mb-1">Service Area</p>
                                     <p className="text-white font-body">
-                                        We come to you — anywhere, anytime.
+                                        We come to you — servicing Melbourne&#39;s South-East.
                                     </p>
                                 </div>
                             </div>
