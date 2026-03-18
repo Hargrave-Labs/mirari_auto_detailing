@@ -25,7 +25,7 @@ const SqueegeeReveal = ({ children, delay = 0 }) => {
                 whileInView={{ clipPath: "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)" }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 1.5, ease: [0.8, 0, 0.2, 1], delay }}
-                className="absolute inset-0 z-40 bg-white/10 backdrop-blur-md mix-blend-screen pointer-events-none"
+                className="absolute inset-0 z-40 bg-white/15 mix-blend-screen pointer-events-none"
             />
 
             <motion.div
