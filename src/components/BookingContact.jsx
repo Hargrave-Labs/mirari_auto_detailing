@@ -104,12 +104,7 @@ const BookingContact = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24">
 
                     {/* Left Column: Contact Info & Value Prop */}
-                    <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        animate={isInView ? { opacity: 1, x: 0 } : {}}
-                        transition={{ duration: 0.8 }}
-                        className="flex flex-col justify-center"
-                    >
+                    <div className="flex flex-col justify-center">
                         <SqueegeeReveal>
                             <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-6">
                                 READY TO BE MARVELLED
@@ -159,7 +154,7 @@ const BookingContact = () => {
                                 </div>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Right Column: the Booking Form */}
                     <motion.div
