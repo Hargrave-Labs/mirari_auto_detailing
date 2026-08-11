@@ -62,13 +62,27 @@ two-CTA problem. The fix is hierarchy, not removal.
 
 ### 1. `src/config/booking.js` (new)
 
-Single source of truth. Exports `BOOKING_URL` and `bookingUrlForService(title)`, which maps a
-Sanity package title to a Square deep link.
+Holds `BOOKING_URL`, the fallback every call to action points at, and
+`bookingUrlForService(service)`.
 
-`ULTIMA` is deliberately absent from the ID map. It has three vehicle-size variants in Square, so
-deep-linking would pick one on the customer's behalf. Ultima falls back to the main booking page
-where the customer selects the correct size. The fallback is the general behaviour for any title
-with no mapped ID, so a renamed or newly added package degrades gracefully rather than breaking.
+**Per-package deep links are content, not code.** They live on a `bookingUrl` field on the Sanity
+`service` document, so Calvin can repoint a package — or add a new one — without a code change,
+and they survive Square services being recreated with new IDs. `bookingUrlForService` returns
+that field when set and falls back to the main booking page when it is blank.
+
+Ultima is deliberately left blank. It has three vehicle-size variants in Square, so deep-linking
+would pick one on the customer's behalf; the main booking page lets them select the correct size.
+Blank-means-fallback is the general rule, so a newly added package works from the moment it is
+created and degrades gracefully rather than breaking.
+
+### 1a. Sanity `service` schema
+
+New optional `bookingUrl` field (type `url`, https only), described in the studio as: open the
+Square booking site, click the package, copy the address bar. Blank sends customers to the main
+booking page.
+
+The front-end query is `*[_type == "service"]`, which already returns every field, so no query
+change is needed.
 
 ### 2. Navbar (`src/components/Navbar.jsx`)
 
@@ -127,8 +141,8 @@ to `#contact`, where booking is now the primary action anyway.
 
 - Navbar `BOOK NOW` (desktop and mobile menu) and the new mobile `BOOK` pill open the Square
   booking site in a new tab.
-- Essentia and Claritas cards deep-link to their Square service; Ultima opens the main booking
-  page.
+- A package with `bookingUrl` set deep-links to that Square service; a package with it blank
+  opens the main booking page. Essentia and Claritas carry deep links, Ultima does not.
 - `#contact` presents online booking as the primary action, with the enquiry form collapsed
   beneath it and expanding on click.
 - The enquiry form still submits successfully through Web3Forms and still populates its service

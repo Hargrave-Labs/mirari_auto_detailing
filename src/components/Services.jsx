@@ -93,7 +93,7 @@ const ServiceCard = ({ service, index }) => {
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-4 relative z-10">
                 <a
-                    href={bookingUrlForService(service.title)}
+                    href={bookingUrlForService(service)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-6 py-3 bg-white text-mirari-black rounded-full text-xs font-heading font-bold tracking-widest uppercase hover:bg-mirari-silver transition-colors duration-300"
