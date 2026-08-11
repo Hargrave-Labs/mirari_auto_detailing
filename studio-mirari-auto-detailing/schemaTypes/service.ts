@@ -48,6 +48,17 @@ export const service = defineType({
             of: [{ type: 'string' }],
             description: 'The list of items included in this service package',
         }),
+        defineField({
+            name: 'bookingUrl',
+            title: 'Square Booking Link',
+            type: 'url',
+            description:
+                'Link this package straight to its booking page. Open the Square booking site, ' +
+                'click this package, then copy the address bar (it ends in /services/...). ' +
+                'Leave blank to send customers to the main booking page instead — do that for ' +
+                'packages with several options to choose from, like Ultima.',
+            validation: (rule) => rule.uri({ scheme: ['https'] }),
+        }),
     ],
     preview: {
         select: {
