@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { BOOKING_URL } from '../config/booking';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -52,18 +53,34 @@ const Navbar = () => {
             </div>
 
             <div className="hidden md:block">
-                <a href="#contact" onClick={(e) => handleScroll(e, '#contact')} className="px-6 py-2.5 bg-white text-mirari-black rounded-full text-xs font-body font-bold tracking-wider hover:bg-mirari-silver transition-all duration-300">
+                <a
+                    href={BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 py-2.5 bg-white text-mirari-black rounded-full text-xs font-body font-bold tracking-wider hover:bg-mirari-silver transition-all duration-300"
+                >
                     BOOK NOW
                 </a>
             </div>
 
-            {/* Mobile Menu Toggle */}
-            <button
-                className="md:hidden text-white"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {/* Mobile: always-visible booking CTA alongside the menu toggle */}
+            <div className="flex items-center gap-3 md:hidden">
+                <a
+                    href={BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-white text-mirari-black rounded-full text-[11px] font-body font-bold tracking-wider hover:bg-mirari-silver transition-all duration-300"
+                >
+                    BOOK
+                </a>
+                <button
+                    className="text-white"
+                    aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                    onClick={() => setIsOpen(!isOpen)}
+                >
+                    {isOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </div>
 
             {/* Mobile Nav Dropdown */}
             {isOpen && (
@@ -78,7 +95,13 @@ const Navbar = () => {
                             {link.name}
                         </a>
                     ))}
-                    <a href="#contact" onClick={(e) => handleScroll(e, '#contact')} className="text-center w-full px-6 py-3 bg-white text-mirari-black rounded-full text-xs font-body font-bold tracking-wider uppercase mt-4 hover:bg-mirari-silver transition-all">
+                    <a
+                        href={BOOKING_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setIsOpen(false)}
+                        className="text-center w-full px-6 py-3 bg-white text-mirari-black rounded-full text-xs font-body font-bold tracking-wider uppercase mt-4 hover:bg-mirari-silver transition-all"
+                    >
                         Book Now
                     </a>
                 </div>

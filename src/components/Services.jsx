@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Sparkles, Shield, Star, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sparkles, Shield, Star, CheckCircle2, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SqueegeeReveal from './SqueegeeReveal';
+import { bookingUrlForService } from '../config/booking';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -90,13 +91,25 @@ const ServiceCard = ({ service, index }) => {
                 )}
             </AnimatePresence>
 
-            <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="flex items-center gap-2 text-sm font-heading font-bold tracking-widest uppercase text-white hover:text-mirari-silver transition-colors duration-300 relative z-10"
-            >
-                {isExpanded ? 'Hide Details' : 'Explore Package'}
-                {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-4 relative z-10">
+                <a
+                    href={bookingUrlForService(service.title)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-white text-mirari-black rounded-full text-xs font-heading font-bold tracking-widest uppercase hover:bg-mirari-silver transition-colors duration-300"
+                >
+                    Book {service.title}
+                    <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="flex items-center gap-2 text-sm font-heading font-bold tracking-widest uppercase text-white hover:text-mirari-silver transition-colors duration-300"
+                >
+                    {isExpanded ? 'Hide Details' : 'Explore Package'}
+                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+            </div>
 
             {/* Background decorative text */}
             <div className="absolute -bottom-4 -right-4 text-5xl md:text-6xl lg:text-7xl font-heading font-bold text-white/[0.02] pointer-events-none select-none z-0 tracking-tighter overflow-hidden whitespace-nowrap">
